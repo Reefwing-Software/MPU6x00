@@ -23,9 +23,7 @@ static const uint8_t INT_PIN = 1;
 static const uint8_t LED0_PIN = A4;
 static const uint8_t LED1_PIN = A5;
 
-static SPIClass spi = SPIClass(MOSI_PIN, MISO_PIN, SCLK_PIN);
-
-static MPU6500 imu = MPU6500(spi, CS_PIN);
+static MPU6500 imu = MPU6500(SPI, CS_PIN);
 
 static void blinkLED(void) {
     const auto msec = millis();
@@ -57,7 +55,7 @@ void setup(void) {
     while (!Serial);
 
     // Initialise SPI and the MPU6500 IMU
-    spi.begin();
+    SPI.begin();
 
     if (imu.begin()) {
         Serial.println("MPU6500 IMU Connected.");
