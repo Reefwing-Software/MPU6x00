@@ -1,0 +1,46 @@
+#######################################
+# IDE Map for Reefwing MPU6x00
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+gyroFsr_e    KEYWORD1
+accelFsr_e KEYWORD1
+Mpu6000 KEYWORD1
+Mpu6500 KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin  KEYWORD2
+init    KEYWORD2
+readSensor  KEYWORD2
+getGyro KEYWORD2
+getAccel    KEYWORD2
+getAccelX   KEYWORD2
+getAccelY   KEYWORD2
+getAccelZ   KEYWORD2
+getGyroX    KEYWORD2
+getGyroY    KEYWORD2
+getGyroZ    KEYWORD2
+getRawAccelX    KEYWORD2
+getRawAccelY    KEYWORD2
+getRawAccelZ    KEYWORD2
+getRawGyroX KEYWORD2
+getRawGyroY KEYWORD2
+getRawGyroZ KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+MADGWICK    LITERAL1
+MAHONY  LITERAL1
+COMPLEMENTARY   LITERAL1
+FUSION  LITERAL1
+CLASSIC LITERAL1
+NONE    LITERAL1
+
