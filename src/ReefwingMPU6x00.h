@@ -152,6 +152,22 @@ class MPU6x00 {
             return getRawValue(13); 
         }
 
+        SensorData getSensorData() {
+            SensorData data;
+
+            data.gx = getGyroX();
+            data.gy = getGyroY();
+            data.gz = getGyroZ();
+            data.gTimeStamp = micros();
+
+            data.ax = getAccelX();
+            data.ay = getAccelY();
+            data.az = getAccelZ();
+            data.aTimeStamp = micros();
+
+            return data;
+        }
+
     protected:
 
         MPU6x00(
