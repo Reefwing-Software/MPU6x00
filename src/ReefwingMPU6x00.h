@@ -92,6 +92,10 @@ class MPU6x00 {
             readRegisters(REG_ACCEL_XOUT_H, m_buffer, 14, SPI_FULL_CLK_HZ);
         }
 
+        void getTemp(float & t) {
+            t = ((((float)getRawValue(7) - 21.0f) - 21.0f) / 333.87f) + 21.0f;
+        }
+
         void getGyro(float & gx, float & gy, float & gz) {
             gx = getRawValue(9)  * m_gyroScale; 
             gy = getRawValue(11) * m_gyroScale; 
@@ -164,6 +168,20 @@ class MPU6x00 {
             data.ay = getAccelY();
             data.az = getAccelZ();
             data.aTimeStamp = micros();
+
+            return data;
+        }
+
+        InertialMessage getInertial() {
+            InertialMessage data;
+
+            data.gx = getGyroX();
+            data.gy = getGyroY();
+            data.gz = getGyroZ();
+            data.ax = getAccelX();
+            data.ay = getAccelY();
+            data.az = getAccelZ();
+            data.timeStamp = micros();
 
             return data;
         }

@@ -1,15 +1,15 @@
 /******************************************************************
-  @file       ARDUINO_MKR_MPU6500.ino
-  @brief      Targeting Arduino MKR boards and the MPU6500 connected
-              using SPI - displays raw Gyro counts.
+  @file       simpleIMU.ino
+  @brief      Display data from all 3 sensors of the MPU6500,
+              Gyro, Accelerometer and chip temperature.
   @author     David Such
   @copyright  Please see the accompanying LICENSE file
 
   Code:        David Such
   Version:     1.0.0
-  Date:        07/07/23
+  Date:        20/03/23
 
-  1.0.0     Original Release.       07/07/23
+  1.0.0     Original Release.       20/03/23
 
 ******************************************************************/
 
@@ -23,21 +23,12 @@ static const uint8_t INT_PIN = 1;
 static const uint8_t LED0_PIN = A4;
 static const uint8_t LED1_PIN = A5;
 
+float mpuTemp = 0.0f;
+int loopFrequency = 0;
+const long displayPeriod = 1000;
+unsigned long previousMillis = 0;
+
 static MPU6500 imu = MPU6500(SPI, CS_PIN);
-
-static void blinkLED(void) {
-    const auto msec = millis();
-    static uint32_t prev;
-
-    if (msec - prev > 500) {
-        static bool on;
-
-        digitalWrite(LED0_PIN, on);
-        on = !on;
-        prev = msec;
-    }
-}
-
 static bool gotInterrupt;
 
 static void handleInterrupt(void) {
@@ -70,19 +61,43 @@ void setup(void) {
 }
 
 void loop(void) {
-    blinkLED();
 
     if (gotInterrupt) {
-
         imu.readSensor();
-
-        Serial.print(imu.getRawGyroX());
-        Serial.print("  ");
-        Serial.print(imu.getRawGyroY());
-        Serial.print("  ");
-        Serial.print(imu.getRawGyroZ());
-        Serial.println(); 
-
+        imu.getTemp(mpuTemp);
         gotInterrupt = false;
     }
+
+    if (millis() - previousMillis >= displayPeriod) {
+    //  Display sensor data every displayPeriod, non-blocking.
+    Serial.print("Gyro X: ");
+    Serial.print(imu.getGyroX());
+    Serial.print("\tGyro Y: ");
+    Serial.print(imu.getGyroY());
+    Serial.print("\tGyro Z: ");
+    Serial.print(imu.getGyroZ());
+    Serial.print(" DPS");
+  
+    Serial.print("\tLoop Frequency: ");
+    Serial.print(loopFrequency);
+    Serial.println(" Hz");
+
+    Serial.print("Accel X: ");
+    Serial.print(imu.getAccelX());
+    Serial.print("\tAccel Y: ");
+    Serial.print(imu.getAccelY());
+    Serial.print("\tAccel Z: ");
+    Serial.print(imu.getAccelZ());
+    Serial.println(" G'S");
+
+    Serial.print("Temp: ");
+    Serial.print(mpuTemp);
+    Serial.println(" C\n");
+
+    loopFrequency = 0;
+    previousMillis = millis();
+  }
+
+  loopFrequency++;
 }
+

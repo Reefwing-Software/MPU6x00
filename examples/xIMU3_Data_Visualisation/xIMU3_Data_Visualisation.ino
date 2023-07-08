@@ -1,18 +1,21 @@
 /******************************************************************
-  @file       ARDUINO_MKR_MPU6500.ino
-  @brief      Targeting Arduino MKR boards and the MPU6500 connected
-              using SPI - displays raw Gyro counts.
+  @file       xIMU3_Data_Visualisation.ino
+  @brief      Real-time data from MPU6500 IMU, displayed on the x-IMU3 GUI.
   @author     David Such
   @copyright  Please see the accompanying LICENSE file
 
   Code:        David Such
   Version:     1.0.0
-  Date:        07/07/23
+  Date:        13/04/23
 
-  1.0.0     Original Release.       07/07/23
+  1.0.0     Original Release.       13/04/23
+
+  Dependency - Requires that the Reefwing_xIMU3_GUI Library is also
+               installed. 
 
 ******************************************************************/
 
+#include <Reefwing_xIMU3.h>
 #include <ReefwingMPU6x00.h>
 
 static const uint8_t MOSI_PIN = 8;
@@ -23,7 +26,9 @@ static const uint8_t INT_PIN = 1;
 static const uint8_t LED0_PIN = A4;
 static const uint8_t LED1_PIN = A5;
 
+Reefwing_xIMU3 rx;
 static MPU6500 imu = MPU6500(SPI, CS_PIN);
+float mpuTemp = 0.0f;
 
 static void blinkLED(void) {
     const auto msec = millis();
@@ -58,10 +63,10 @@ void setup(void) {
     SPI.begin();
 
     if (imu.begin()) {
-        Serial.println("MPU6500 IMU Connected.");
+        rx.sendNotification("MPU6500 IMU Connected");
     }
     else {
-        Serial.println("Error initializing IMU.");
+        rx.sendError("MPU6500 IMU Not Connected");
         digitalWrite(LED1_PIN, HIGH);
         while(1);
     }
@@ -76,12 +81,13 @@ void loop(void) {
 
         imu.readSensor();
 
-        Serial.print(imu.getRawGyroX());
-        Serial.print("  ");
-        Serial.print(imu.getRawGyroY());
-        Serial.print("  ");
-        Serial.print(imu.getRawGyroZ());
-        Serial.println(); 
+        //  Read IMU Sensor Data
+        InertialMessage msg = imu.getInertial();
+        imu.getTemp(mpuTemp);
+
+        //  Send data messages to xIMU3 GUI
+        rx.sendInertial(msg);
+        rx.sendTemperature(mpuTemp);
 
         gotInterrupt = false;
     }
