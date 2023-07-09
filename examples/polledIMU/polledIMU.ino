@@ -54,7 +54,7 @@ void setup(void) {
 
     //  Calibrate IMU for Bias Offset
     Serial.println("Calibrating IMU - no movement please!");
-    calibrateAccelGyro();
+    imu.calibrateAccelGyro();
     Serial.println("IMU Calibrated.");
 }
 

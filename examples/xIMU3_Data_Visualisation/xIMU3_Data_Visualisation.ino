@@ -75,7 +75,7 @@ void setup(void) {
 
     //  Calibrate IMU for Bias Offset
     rx.sendNotification("Calibrating IMU - no movement please!");
-    calibrateAccelGyro();
+    imu.calibrateAccelGyro();
     rx.sendNotification("IMU Calibrated.");
 }
 

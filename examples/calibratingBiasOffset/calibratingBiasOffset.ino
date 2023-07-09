@@ -61,8 +61,25 @@ void setup(void) {
 
     //  Calibrate IMU for Bias Offset
     Serial.println("Calibrating IMU - no movement please!");
-    calibrateAccelGyro();
+    imu.calibrateAccelGyro();
     Serial.println("IMU Calibrated.");
+
+    BiasOffsets gyroOffsets = imu.getGyroOffsets();
+    BiasOffsets accelOffsets = imu.getAccelOffsets();
+
+    Serial.print("GX Offset: ");
+    Serial.print(gyroOffsets.x);
+    Serial.print("\tGY Offset: ");
+    Serial.print(gyroOffsets.y);
+    Serial.print("\tGZ Offset: ");
+    Serial.println(gyroOffsets.z);
+    Serial.print("AX Offset: ");
+    Serial.print(accelOffsets.x);
+    Serial.print("\tAY Offset: ");
+    Serial.print(accelOffsets.y);
+    Serial.print("\tAZ Offset: ");
+    Serial.println(accelOffsets.z);
+    Serial.println();
 }
 
 void loop(void) {

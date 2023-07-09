@@ -178,6 +178,14 @@ class MPU6x00 {
             return getRawValue(13); 
         }
 
+        BiasOffsets getGyroOffsets() {
+            return m_gyroOffset;
+        }
+
+        BiasOffsets getAccelOffsets() {
+            return m_accelOffset;
+        }
+
         SensorData getSensorData() {
             SensorData data;
             float gx, gy, gz, ax, ay, az;
@@ -219,7 +227,7 @@ class MPU6x00 {
         void calibrateAccelGyro() {
             long accum_gx, accum_gy, accum_gz;
             long accum_ax, accum_ay, accum_az;
-            
+
             //  Discard first reading
             readSensor();
 
@@ -235,7 +243,7 @@ class MPU6x00 {
                 accum_gz += getRawGyroZ();
                 accum_ax += getRawAccelX();
                 accum_ay += getRawAccelY();
-                accum_az += getRawAccelZ();
+                accum_az += getRawAccelZ() - (int16_t)(1.0f / m_accelScale);
             }
 
             m_gyroOffset.x = accum_gx / 32;
