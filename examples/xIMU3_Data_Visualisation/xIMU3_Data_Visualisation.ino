@@ -28,7 +28,6 @@ static const uint8_t LED1_PIN = A5;
 
 Reefwing_xIMU3 rx;
 static MPU6500 imu = MPU6500(SPI, CS_PIN);
-float mpuTemp = 0.0f;
 
 static void blinkLED(void) {
     const auto msec = millis();
@@ -83,16 +82,15 @@ void loop(void) {
     blinkLED();
 
     if (gotInterrupt) {
-
         imu.readSensor();
 
-        //  Read IMU Sensor Data
+        //  Read IMU Sensor Data in xIMU3 format
         InertialMessage msg = imu.getInertial();
-        imu.getTemp(mpuTemp);
+        TempData td = imu.getTempData();
 
         //  Send data messages to xIMU3 GUI
         rx.sendInertial(msg);
-        rx.sendTemperature(mpuTemp);
+        rx.sendTemperature(td);
 
         gotInterrupt = false;
     }

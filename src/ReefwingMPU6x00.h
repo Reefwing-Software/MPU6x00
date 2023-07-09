@@ -212,6 +212,15 @@ class MPU6x00 {
             return data;
         }
 
+        TempData getTempData() {
+            TempData td;
+            float t;
+
+            getTemp(t);
+            td.celsius = t;
+            td.timeStamp = micros();
+        }
+
         InertialMessage getInertial() {
             InertialMessage data;
             float gx, gy, gz, ax, ay, az;

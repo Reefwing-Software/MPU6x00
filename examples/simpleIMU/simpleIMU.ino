@@ -61,7 +61,6 @@ void setup(void) {
 }
 
 void loop(void) {
-
     if (gotInterrupt) {
         imu.readSensor();
         imu.getTemp(mpuTemp);

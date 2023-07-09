@@ -59,7 +59,6 @@ void setup(void) {
 }
 
 void loop(void) {
-
     if (imu.dataAvailable()) {
         imu.readSensor();
         imu.getCalibratedGyro(gx, gy, gz);

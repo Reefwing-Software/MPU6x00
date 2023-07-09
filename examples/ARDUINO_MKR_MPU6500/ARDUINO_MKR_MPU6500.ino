@@ -73,7 +73,6 @@ void loop(void) {
     blinkLED();
 
     if (gotInterrupt) {
-
         imu.readSensor();
 
         Serial.print(imu.getRawGyroX());
