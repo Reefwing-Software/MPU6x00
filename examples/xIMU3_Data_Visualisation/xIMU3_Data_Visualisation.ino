@@ -63,15 +63,20 @@ void setup(void) {
     SPI.begin();
 
     if (imu.begin()) {
-        rx.sendNotification("MPU6500 IMU Connected");
+        rx.sendNotification("MPU6500 IMU Connected.");
     }
     else {
-        rx.sendError("MPU6500 IMU Not Connected");
+        rx.sendError("MPU6500 IMU Not Connected.");
         digitalWrite(LED1_PIN, HIGH);
         while(1);
     }
 
     attachInterrupt(INT_PIN, handleInterrupt, RISING);
+
+    //  Calibrate IMU for Bias Offset
+    rx.sendNotification("Calibrating IMU - no movement please!");
+    calibrateAccelGyro();
+    rx.sendNotification("IMU Calibrated.");
 }
 
 void loop(void) {

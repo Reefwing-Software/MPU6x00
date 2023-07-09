@@ -45,6 +45,10 @@ class MPU6x00 {
 
         } accelFsr_e;
 
+        struct BiasOffsets {
+            int16_t x, y, z;
+        };
+
         /**
           * Returns true on success, false on failure.
           */
@@ -88,6 +92,12 @@ class MPU6x00 {
             return true;
         }
 
+        bool dataAvailable() { 
+            uint8_t buf[2] = {};
+            readRegisters(REG_INT_STATUS, buf, 1, SPI_FULL_CLK_HZ);
+            return (buf[1] & 0x01);
+        }
+
         void readSensor(void) {
             readRegisters(REG_ACCEL_XOUT_H, m_buffer, 14, SPI_FULL_CLK_HZ);
         }
@@ -106,6 +116,18 @@ class MPU6x00 {
             ax = getRawValue(1) * m_accelScale; 
             ay = getRawValue(3) * m_accelScale; 
             az = getRawValue(5) * m_accelScale; 
+        }
+
+        void getCalibratedGyro(float & gx, float & gy, float & gz) {
+            gx = (getRawValue(9)  - m_gyroOffset.x) * m_gyroScale; 
+            gy = (getRawValue(11) - m_gyroOffset.y) * m_gyroScale; 
+            gz = (getRawValue(13) - m_gyroOffset.z) * m_gyroScale; 
+        }
+
+        void getCalibratedAccel(float & ax, float & ay, float & az) {
+            ax = (getRawValue(1) - m_accelOffset.x) * m_accelScale; 
+            ay = (getRawValue(3) - m_accelOffset.y) * m_accelScale; 
+            az = (getRawValue(5) - m_accelOffset.z) * m_accelScale; 
         }
 
         float getAccelX(void) {
@@ -158,15 +180,19 @@ class MPU6x00 {
 
         SensorData getSensorData() {
             SensorData data;
+            float gx, gy, gz, ax, ay, az;
 
-            data.gx = getGyroX();
-            data.gy = getGyroY();
-            data.gz = getGyroZ();
+            getCalibratedGyro(gx, gy, gz);
+            getCalibratedAccel(ax, ay, az);
+
+            data.gx = gx;
+            data.gy = gy;
+            data.gz = gz;
             data.gTimeStamp = micros();
 
-            data.ax = getAccelX();
-            data.ay = getAccelY();
-            data.az = getAccelZ();
+            data.ax = ax;
+            data.ay = ay;
+            data.az = az;
             data.aTimeStamp = micros();
 
             return data;
@@ -174,16 +200,50 @@ class MPU6x00 {
 
         InertialMessage getInertial() {
             InertialMessage data;
+            float gx, gy, gz, ax, ay, az;
 
-            data.gx = getGyroX();
-            data.gy = getGyroY();
-            data.gz = getGyroZ();
-            data.ax = getAccelX();
-            data.ay = getAccelY();
-            data.az = getAccelZ();
+            getCalibratedGyro(gx, gy, gz);
+            getCalibratedAccel(ax, ay, az);
+
+            data.gx = gx;
+            data.gy = gy;
+            data.gz = gz;
+            data.ax = ax;
+            data.ay = ay;
+            data.az = az;
             data.timeStamp = micros();
 
             return data;
+        }
+
+        void calibrateAccelGyro() {
+            long accum_gx, accum_gy, accum_gz;
+            long accum_ax, accum_ay, accum_az;
+            
+            //  Discard first reading
+            readSensor();
+
+            //  Average 32 zero-rate (bias offset) samples
+            for (int i = 0; i < 32; i++) {
+                while (!dataAvailable()) {
+                yield();
+                }
+
+                readSensor();
+                accum_gx += getRawGyroX();
+                accum_gy += getRawGyroY();
+                accum_gz += getRawGyroZ();
+                accum_ax += getRawAccelX();
+                accum_ay += getRawAccelY();
+                accum_az += getRawAccelZ();
+            }
+
+            m_gyroOffset.x = accum_gx / 32;
+            m_gyroOffset.y = accum_gy / 32;
+            m_gyroOffset.z = accum_gz / 32;
+            m_accelOffset.x = accum_ax / 32;
+            m_accelOffset.y = accum_ay / 32;
+            m_accelOffset.z = accum_az / 32;
         }
 
     protected:
@@ -223,6 +283,7 @@ class MPU6x00 {
         static const uint8_t REG_ACCEL_CONFIG = 0x1C;
         static const uint8_t REG_INT_PIN_CFG  = 0x37;
         static const uint8_t REG_INT_ENABLE   = 0x38;
+        static const uint8_t REG_INT_STATUS   = 0x3A;
         static const uint8_t REG_ACCEL_XOUT_H = 0x3B;
         static const uint8_t REG_USER_CTRL    = 0x6A;
         static const uint8_t REG_PWR_MGMT_1   = 0x6B;
@@ -245,6 +306,8 @@ class MPU6x00 {
         float m_accelScale;
 
         uint8_t m_buffer[15];
+
+        BiasOffsets m_gyroOffset, m_accelOffset;
 
         void init(
                 const uint8_t deviceId,
