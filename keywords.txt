@@ -10,16 +10,23 @@ gyroFsr_e    KEYWORD1
 accelFsr_e KEYWORD1
 Mpu6000 KEYWORD1
 Mpu6500 KEYWORD1
+BiasOffsets KEYWORD1
+SensorData  KEYWORD1
+TempData    KEYWORD1
+InertialMessage KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
 begin  KEYWORD2
-init    KEYWORD2
+dataAvailable   KEYWORD2
 readSensor  KEYWORD2
+getTemp KEYWORD2
 getGyro KEYWORD2
 getAccel    KEYWORD2
+getCalibratedGyro   KEYWORD2
+getCalibratedAccel  KEYWORD2
 getAccelX   KEYWORD2
 getAccelY   KEYWORD2
 getAccelZ   KEYWORD2
@@ -32,15 +39,15 @@ getRawAccelZ    KEYWORD2
 getRawGyroX KEYWORD2
 getRawGyroY KEYWORD2
 getRawGyroZ KEYWORD2
+getGyroOffsets  KEYWORD2
+getAccelOffsets KEYWORD2
+getSensorData   KEYWORD2
+getTempData()   KEYWORD2
+getInertial KEYWORD2
+calibrateAccelGyro  KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
 #######################################
 
-MADGWICK    LITERAL1
-MAHONY  LITERAL1
-COMPLEMENTARY   LITERAL1
-FUSION  LITERAL1
-CLASSIC LITERAL1
-NONE    LITERAL1
 

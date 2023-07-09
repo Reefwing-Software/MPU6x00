@@ -1,7 +1,7 @@
 /******************************************************************
   @file       calibratingBiasOffset.ino
-  @brief      Display data from MPU6500 after calibration. Keep
-              IMU still and flat during bias offset calibration.
+  @brief      Displays data from MPU-6500 after calibration. Keep
+              the IMU still and flat during bias offset calibration.
   @author     David Such
   @copyright  Please see the accompanying LICENSE file
 

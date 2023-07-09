@@ -1,6 +1,6 @@
 /******************************************************************
   @file       simpleIMU.ino
-  @brief      Display data from all 3 sensors of the MPU6500,
+  @brief      Displays data from all 3 sensors of the MPU-6500,
               Gyro, Accelerometer and chip temperature.
   @author     David Such
   @copyright  Please see the accompanying LICENSE file
