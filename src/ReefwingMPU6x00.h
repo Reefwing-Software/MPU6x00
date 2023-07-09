@@ -219,6 +219,8 @@ class MPU6x00 {
             getTemp(t);
             td.celsius = t;
             td.timeStamp = micros();
+
+            return td;
         }
 
         InertialMessage getInertial() {
