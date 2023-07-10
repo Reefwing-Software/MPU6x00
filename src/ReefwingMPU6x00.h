@@ -4,10 +4,11 @@
   @author     Simon D. Levy (Modifications David Such)
   @copyright  Please see the accompanying LICENSE file
   
-   Version:     1.0.0
-   Date:        07/07/23
+   Version:     1.0.1
+   Date:        10/07/23
  
-   1.0.0    Original Release    07/07/23
+   1.0.0    Original Release            07/07/23
+   1.0.1    Updated Library Properties  10/07/23
  
  ******************************************************************/
 
